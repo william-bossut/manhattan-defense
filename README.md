@@ -84,7 +84,7 @@ When you issue the `npm run build` command, all static assets are automatically 
 
 ## Deploying to Production
 
-`npm run build-nolog` builds the game into the `dist/` folder. The repo uses a GitHub Actions workflow to deploy to **Cloudflare Pages** on every push to `main`.
+`npm run build-nolog` builds the game into the `dist/` folder. The repo uses a GitHub Actions workflow to deploy to **GitHub Pages** on every push to `main`.
 
 See [`docs/deploy.md`](docs/deploy.md) for the full step-by-step guide, including how to add a custom domain.
 

@@ -1,63 +1,61 @@
-# Deploy Manhattan Defense to Cloudflare Pages
+# Deploy Manhattan Defense to GitHub Pages
 
-The project now uses **GitHub Actions** to build and deploy to **Cloudflare Pages** on every push to `main`.
+The project uses a GitHub Actions workflow to build and deploy to **GitHub Pages** on every push to `main`.
 
-## What you need
+## Requirements
 
-Three GitHub secrets:
+- The repo must be **public** if you're on the free GitHub plan (private GitHub Pages requires Pro/Team/Enterprise).
+- You need to enable Pages in the repo settings and select **GitHub Actions** as the source.
 
-| Secret | What it is | Where to get it |
-|---|---|---|
-| `CLOUDFLARE_API_TOKEN` | API token with Cloudflare Pages edit permission | https://dash.cloudflare.com/profile/api-tokens |
-| `CLOUDFLARE_ACCOUNT_ID` | Your Cloudflare account ID | https://dash.cloudflare.com → right sidebar of any domain, or Pages overview URL |
-| `CLOUDFLARE_PROJECT_NAME` | The Cloudflare Pages project name | You choose it when creating the project (e.g. `manhattan-defense`) |
+## 1. Enable GitHub Pages
 
-## 1. Create the Cloudflare Pages project
+1. Go to https://github.com/william-bossut/manhattan-defense/settings/pages
+2. Under **Source**, select **GitHub Actions**.
+3. Save.
 
-### Option A — Dashboard (easiest)
-1. Go to https://dash.cloudflare.com → **Pages** → **Create a project**.
-2. Choose **Connect to Git** → select `william-bossut/manhattan-defense`.
-3. In build settings, use:
-   - Build command: `npm run build-nolog`
-   - Build output directory: `dist`
-4. Save. Cloudflare creates the project and gives it a name.
+## 2. Make the repo public (if needed)
 
-### Option B — API
-If you give the agent your `CLOUDFLARE_API_TOKEN` and `CLOUDFLARE_ACCOUNT_ID`, they can create it via the Cloudflare API:
+If you're on the free GitHub plan, make the repo public:
+
 ```bash
-curl -X POST "https://api.cloudflare.com/client/v4/accounts/$ACCOUNT_ID/pages/projects" \
-  -H "Authorization: Bearer $TOKEN" \
-  -H "Content-Type: application/json" \
-  -d '{"name":"manhattan-defense","production_branch":"main"}'
+cd "/home/sstaline/Documents/vs code/manhattan-defense"
+gh repo edit --visibility public
 ```
 
-## 2. Add GitHub secrets
-
-In your GitHub repo: **Settings → Secrets and variables → Actions → New repository secret**.
-
-Add all three secrets from step 1.
+Or change it in the repo settings: **Settings → General → Danger zone → Change repository visibility**.
 
 ## 3. Trigger a deploy
 
 Push any commit to `main`, or re-run the latest workflow:
+
 ```bash
 cd "/home/sstaline/Documents/vs code/manhattan-defense"
-git commit --allow-empty -m "trigger: deploy to Cloudflare Pages"
+git commit --allow-empty -m "trigger: deploy to GitHub Pages"
 git push
 ```
 
 ## 4. Custom domain
 
 Once the first deploy succeeds:
-1. In Cloudflare Pages → your project → **Custom domains**.
-2. Click **Set up a custom domain** and enter your domain.
-3. Follow Cloudflare's DNS instructions. Because your domain is already on Cloudflare, this is usually one click.
+
+1. Go to https://github.com/william-bossut/manhattan-defense/settings/pages
+2. Under **Custom domain**, enter your domain (e.g. `manhattan-defense.com`).
+3. Follow GitHub's DNS instructions. If your domain is on Cloudflare/another DNS, add the required `A`, `AAAA`, or `CNAME` records.
+4. Enable **Enforce HTTPS** once DNS propagates.
 
 ## Build settings
 
-Build settings are controlled by `.github/workflows/deploy.yml`, not by Cloudflare's dashboard. The workflow runs:
+The workflow at `.github/workflows/deploy.yml` runs:
+
 ```bash
 npm ci
 npm run build-nolog
 ```
-and uploads the `dist/` folder.
+
+and uploads the `dist/` folder to GitHub Pages.
+
+Your default URL will be:
+
+```
+https://william-bossut.github.io/manhattan-defense/
+```
