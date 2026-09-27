@@ -84,9 +84,9 @@ When you issue the `npm run build` command, all static assets are automatically 
 
 ## Deploying to Production
 
-After you run the `npm run build` command, your code will be built into a single bundle and saved to the `dist` folder, along with any other assets your project imported, or stored in the public assets folder.
+`npm run build-nolog` builds the game into the `dist/` folder. The repo already includes `netlify.toml` and a GitHub Actions workflow for Netlify.
 
-In order to deploy your game, you will need to upload *all* of the contents of the `dist` folder to a public facing web server.
+See [`docs/deploy.md`](docs/deploy.md) for the full step-by-step guide to publish on GitHub and auto-deploy on every merge to `main`.
 
 ## Customizing the Template
 
