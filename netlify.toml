@@ -1,8 +1,0 @@
-[build]
-  command = "npm run build-nolog"
-  publish = "dist"
-
-[[redirects]]
-  from = "/*"
-  to = "/index.html"
-  status = 200

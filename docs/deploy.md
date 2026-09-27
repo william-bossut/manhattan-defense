@@ -1,52 +1,63 @@
-# Deploy Manhattan Defense to Netlify
+# Deploy Manhattan Defense to Cloudflare Pages
 
-The project is already configured for Netlify:
+The project now uses **GitHub Actions** to build and deploy to **Cloudflare Pages** on every push to `main`.
 
-- `netlify.toml` — build command `npm run build-nolog`, publish directory `dist`
-- `package.json` — Vite + Phaser build scripts
-- `.github/workflows/deploy.yml` — builds and deploys on every push to `main`
+## What you need
 
-## 1. Push to GitHub
+Three GitHub secrets:
 
+| Secret | What it is | Where to get it |
+|---|---|---|
+| `CLOUDFLARE_API_TOKEN` | API token with Cloudflare Pages edit permission | https://dash.cloudflare.com/profile/api-tokens |
+| `CLOUDFLARE_ACCOUNT_ID` | Your Cloudflare account ID | https://dash.cloudflare.com → right sidebar of any domain, or Pages overview URL |
+| `CLOUDFLARE_PROJECT_NAME` | The Cloudflare Pages project name | You choose it when creating the project (e.g. `manhattan-defense`) |
+
+## 1. Create the Cloudflare Pages project
+
+### Option A — Dashboard (easiest)
+1. Go to https://dash.cloudflare.com → **Pages** → **Create a project**.
+2. Choose **Connect to Git** → select `william-bossut/manhattan-defense`.
+3. In build settings, use:
+   - Build command: `npm run build-nolog`
+   - Build output directory: `dist`
+4. Save. Cloudflare creates the project and gives it a name.
+
+### Option B — API
+If you give the agent your `CLOUDFLARE_API_TOKEN` and `CLOUDFLARE_ACCOUNT_ID`, they can create it via the Cloudflare API:
 ```bash
-cd "/home/sstaline/Documents/vs code/manhattan-defense"
-
-# Create the repo on GitHub first (do NOT initialize it with README/license)
-# Then add it as the remote and push:
-git remote add origin https://github.com/YOUR_GITHUB_USERNAME/manhattan-defense.git
-git branch -M main
-git push -u origin main
+curl -X POST "https://api.cloudflare.com/client/v4/accounts/$ACCOUNT_ID/pages/projects" \
+  -H "Authorization: Bearer $TOKEN" \
+  -H "Content-Type: application/json" \
+  -d '{"name":"manhattan-defense","production_branch":"main"}'
 ```
 
-## 2. Choose a deploy method
+## 2. Add GitHub secrets
 
-### Option A — Netlify Git integration (easiest, recommended)
+In your GitHub repo: **Settings → Secrets and variables → Actions → New repository secret**.
 
-1. Go to [netlify.com](https://netlify.com) → **Add new site** → **Import an existing project**.
-2. Connect your GitHub account and pick `YOUR_GITHUB_USERNAME/manhattan-defense`.
-3. Build settings are read from `netlify.toml`, so they should auto-fill:
-   - Build command: `npm run build-nolog`
-   - Publish directory: `dist`
-4. Click **Deploy**.
+Add all three secrets from step 1.
 
-Netlify will now auto-deploy every time you push (or merge a PR) to `main`.
+## 3. Trigger a deploy
 
-### Option B — GitHub Actions (the workflow already exists)
+Push any commit to `main`, or re-run the latest workflow:
+```bash
+cd "/home/sstaline/Documents/vs code/manhattan-defense"
+git commit --allow-empty -m "trigger: deploy to Cloudflare Pages"
+git push
+```
 
-Use this if you prefer deploy logs inside GitHub instead of Netlify's dashboard.
+## 4. Custom domain
 
-1. In Netlify, go to **Site settings → General → Site details** and copy the **Site ID**.
-2. Go to **User settings → Applications → Personal access tokens** and generate a token.
-3. In your GitHub repo, go to **Settings → Secrets and variables → Actions** and add:
-   - `NETLIFY_AUTH_TOKEN` — the token from step 2
-   - `NETLIFY_SITE_ID` — the site ID from step 1
+Once the first deploy succeeds:
+1. In Cloudflare Pages → your project → **Custom domains**.
+2. Click **Set up a custom domain** and enter your domain.
+3. Follow Cloudflare's DNS instructions. Because your domain is already on Cloudflare, this is usually one click.
 
-The workflow at `.github/workflows/deploy.yml` will deploy on every push to `main`.
+## Build settings
 
-## 3. Pull requests
-
-Both options will build pull requests. With Option A you get Netlify deploy previews; with Option B the workflow runs a build check but only deploys from `main`.
-
-## 4. After deploy
-
-Your live URL will look like `https://manhattan-defense-xxx.netlify.app`. Add it to the repo's **About** section on GitHub.
+Build settings are controlled by `.github/workflows/deploy.yml`, not by Cloudflare's dashboard. The workflow runs:
+```bash
+npm ci
+npm run build-nolog
+```
+and uploads the `dist/` folder.

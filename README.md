@@ -84,9 +84,9 @@ When you issue the `npm run build` command, all static assets are automatically 
 
 ## Deploying to Production
 
-`npm run build-nolog` builds the game into the `dist/` folder. The repo already includes `netlify.toml` and a GitHub Actions workflow for Netlify.
+`npm run build-nolog` builds the game into the `dist/` folder. The repo uses a GitHub Actions workflow to deploy to **Cloudflare Pages** on every push to `main`.
 
-See [`docs/deploy.md`](docs/deploy.md) for the full step-by-step guide to publish on GitHub and auto-deploy on every merge to `main`.
+See [`docs/deploy.md`](docs/deploy.md) for the full step-by-step guide, including how to add a custom domain.
 
 ## Customizing the Template
 
