@@ -1,0 +1,123 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Manhattan Defense — round 3 (developed)</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+  * { box-sizing: border-box; }
+  body { margin: 0; background: #000; color: #fff; font-family: "JetBrains Mono", monospace; padding: 28px 20px 60px; }
+  .wrap { max-width: 1200px; margin: 0 auto; }
+  h1 { font-family: "Press Start 2P", monospace; font-size: 18px; margin: 0 0 6px; }
+  .lead { color: #bfbfbf; font-size: 12px; max-width: 760px; margin: 0 0 24px; line-height: 1.6; }
+  .lead a { color: #D81F26; }
+  h2.section { font-size: 12px; letter-spacing: 0.08em; text-transform: uppercase; color: #D81F26; margin: 30px 0 12px; border-top: 1px solid #2b2b2b; padding-top: 20px; }
+
+  .sprites { display: flex; gap: 20px; flex-wrap: wrap; align-items: flex-end; }
+  .sprite-card { background: #0a0a0a; border: 1px solid #2b2b2b; border-radius: 8px; padding: 14px; text-align: center; }
+  .sprite-card canvas { image-rendering: pixelated; display: block; margin: 0 auto 8px; }
+  .sprite-card .label { font-size: 10px; letter-spacing: 0.05em; text-transform: uppercase; color: #bfbfbf; }
+
+  .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 16px; }
+  .card { border: 1px solid #2b2b2b; border-radius: 8px; background: #0a0a0a; padding: 10px; cursor: pointer; transition: border-color 150ms ease, transform 150ms ease; }
+  .card:hover { border-color: #D81F26; transform: translateY(-2px); }
+  .card canvas { width: 100%; height: auto; display: block; image-rendering: pixelated; border-radius: 3px; background: #000; }
+  .card h2 { font-size: 11px; letter-spacing: 0.04em; text-transform: uppercase; margin: 8px 0 4px; }
+  .card .idx { color: #D81F26; }
+  .card .note { font-size: 10px; color: #7a7a7a; line-height: 1.4; }
+  .card .refs { font-size: 9px; color: #7a7a7a; margin-top: 4px; }
+  .card .refs a { color: #7a7a7a; }
+  .card .swatch { display: flex; height: 6px; border-radius: 2px; overflow: hidden; margin-top: 6px; }
+  .card .swatch span { flex: 1; }
+
+  #overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.94); display: none; align-items: center; justify-content: center; flex-direction: column; gap: 14px; z-index: 10; }
+  #overlay.open { display: flex; }
+  #overlay canvas { max-width: 90vw; max-height: 70vh; image-rendering: pixelated; border: 1px solid #2b2b2b; }
+  #overlay .info { text-align: center; max-width: 640px; }
+  #overlay h2 { font-size: 14px; letter-spacing: 0.05em; text-transform: uppercase; margin: 0 0 6px; }
+  #overlay .note { font-size: 11px; color: #bfbfbf; }
+  #overlay .refs { font-size: 10px; color: #7a7a7a; margin-top: 6px; }
+  #overlay .refs a { color: #D81F26; }
+  #overlay .nav { font-size: 10px; color: #7a7a7a; }
+  #overlay .close { position: absolute; top: 18px; right: 24px; font-size: 11px; color: #bfbfbf; cursor: pointer; }
+</style>
+</head>
+<body>
+  <div class="wrap">
+    <h1>MANHATTAN DEFENSE — ROUND 3</h1>
+    <p class="lead">
+      You picked <b>#7 "Pixel + Real Lighting"</b> (The Last Night / REPLACED) from the round-2
+      gallery. This round develops that direction properly: a real designed ship and asteroid
+      sprite (not placeholder shapes), and <b>7 variations</b> exploring mood, weather, altitude
+      and danger within that one direction. Back to the full 15-style survey:
+      <a href="gallery.html">gallery.html</a>.
+    </p>
+
+    <h2 class="section">Sprite designs</h2>
+    <div class="sprites" id="sprites"></div>
+
+    <h2 class="section">Variations (click to open fullscreen &amp; animated)</h2>
+    <div class="grid" id="grid"></div>
+  </div>
+
+  <div id="overlay">
+    <div class="close" id="closeBtn">ESC &times;</div>
+    <canvas id="bigCanvas"></canvas>
+    <div class="info">
+      <h2 id="bigTitle"></h2>
+      <p class="note" id="bigNote"></p>
+      <p class="refs" id="bigRefs"></p>
+      <p class="nav">&larr; / &rarr; to flip &middot; <span id="bigIndex"></span></p>
+    </div>
+  </div>
+
+<script src="gallery/lib.js"></script>
+<script src="gallery/sprites.js"></script>
+<script src="gallery/round3/base.js"></script>
+<script src="gallery/round3/r1-cinematic-base.js"></script>
+<script src="gallery/round3/r2-sodium-dawn.js"></script>
+<script src="gallery/round3/r3-neon-deep-night.js"></script>
+<script src="gallery/round3/r4-storm-rain.js"></script>
+<script src="gallery/round3/r5-canyon-closeup.js"></script>
+<script src="gallery/round3/r6-high-orbit.js"></script>
+<script src="gallery/round3/r7-red-alert.js"></script>
+<script>
+  // Sprite showcase: ship (a few headings) + both asteroid sizes, zoomed in.
+  const spriteWrap = document.getElementById('sprites');
+  function showSprite(label, sprite, scale) {
+    const card = document.createElement('div');
+    card.className = 'sprite-card';
+    const canvas = document.createElement('canvas');
+    canvas.width = sprite.width * scale;
+    canvas.height = sprite.height * scale;
+    const ctx = canvas.getContext('2d');
+    ctx.imageSmoothingEnabled = false;
+    ctx.fillStyle = '#000'; ctx.fillRect(0, 0, canvas.width, canvas.height);
+    ctx.drawImage(sprite, 0, 0, canvas.width, canvas.height);
+    card.appendChild(canvas);
+    const l = document.createElement('div'); l.className = 'label'; l.textContent = label;
+    card.appendChild(l);
+    spriteWrap.appendChild(card);
+  }
+  showSprite('Ship — red accent', MDSprites.ship, 9);
+  showSprite('Ship — cyan accent', MDSprites.shipCyan, 9);
+  showSprite('Asteroid — large', MDSprites.asteroidBig, 9);
+  showSprite('Asteroid — large (var. 2)', MDSprites.asteroidBig2, 9);
+  showSprite('Asteroid — small (split)', MDSprites.asteroidSmall, 9);
+
+  MDLib.mountGallery({
+    gridEl: document.getElementById('grid'),
+    styleList: MDLib.styles,
+    overlay: document.getElementById('overlay'),
+    bigCanvas: document.getElementById('bigCanvas'),
+    bigTitle: document.getElementById('bigTitle'),
+    bigNote: document.getElementById('bigNote'),
+    bigRefs: document.getElementById('bigRefs'),
+    bigIndex: document.getElementById('bigIndex'),
+    closeBtn: document.getElementById('closeBtn'),
+  });
+</script>
+</body>
+</html>

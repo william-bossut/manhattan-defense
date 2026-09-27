@@ -1,0 +1,100 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Manhattan Defense — dusk to night</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  * { box-sizing: border-box; }
+  body { margin: 0; background: #000; color: #fff; font-family: "JetBrains Mono", monospace; min-height: 100vh; display: flex; flex-direction: column; align-items: center; padding: 20px 16px 40px; }
+  h1 { font-family: "Press Start 2P", monospace; font-size: 14px; margin: 0 0 14px; letter-spacing: 0.04em; }
+  canvas { image-rendering: pixelated; image-rendering: crisp-edges; display: block; border: 1px solid #1f1f1f; }
+  .bar { display: flex; align-items: center; gap: 14px; margin-top: 14px; font-size: 11px; color: #bfbfbf; flex-wrap: wrap; justify-content: center; }
+  .bar input[type=range] { width: 320px; accent-color: #D81F26; }
+  .tag { font-size: 10px; letter-spacing: 0.08em; }
+  .tag.dusk { color: #FFC15E; } .tag.night { color: #FF3B3B; }
+  .note { margin-top: 16px; max-width: 760px; font-size: 10px; color: #7a7a7a; line-height: 1.6; text-align: center; }
+  .note b { color: #bfbfbf; }
+</style>
+</head>
+<body>
+  <h1>MANHATTAN DEFENSE — DUSK &rarr; NIGHT</h1>
+  <canvas id="c"></canvas>
+  <div class="bar">
+    <span class="tag dusk">DUSK</span>
+    <input id="alt" type="range" min="0" max="1000" value="0">
+    <span class="tag night">NIGHT</span>
+    <label><input id="auto" type="checkbox" checked> auto-play</label>
+    <label><input id="dbg" type="checkbox"> show pixel classes</label>
+  </div>
+  <p class="note">
+    Painted art, animated by code: the <b>same image</b> is regraded pixel by pixel — sky goes dark blue,
+    buildings cool down, each gold window flips to red at its own moment, stars and a moon come out.
+    In the game the slider = altitude. <b>Test art only:</b> this reference is a Dreamstime stock image
+    (watermarked) — it proves the idea, our own generated art replaces it.
+  </p>
+
+<script src="../gallery/lib.js"></script>
+<script src="../gallery/sprites.js"></script>
+<script src="ref-dusk-native.js"></script>
+<script src="evolution.js"></script>
+<script>
+  const canvas = document.getElementById('c');
+  const ctx = canvas.getContext('2d');
+  const alt = document.getElementById('alt');
+  const auto = document.getElementById('auto');
+  const dbg = document.getElementById('dbg');
+
+  const img = new Image();
+  img.onload = () => {
+    const A = MDEvolution.analyze(img);
+    canvas.width = A.W; canvas.height = A.H;
+    function fit() {
+      const s = Math.max(1, Math.floor(Math.min((innerWidth - 40) / A.W, (innerHeight - 180) / A.H)));
+      canvas.style.width = A.W * s + 'px'; canvas.style.height = A.H * s + 'px';
+    }
+    fit(); addEventListener('resize', fit);
+    ctx.imageSmoothingEnabled = false;
+
+    alt.addEventListener('input', () => { auto.checked = false; });
+    let autoStart = performance.now();
+    auto.addEventListener('change', () => { autoStart = performance.now() - Math.acos(1 - 2 * alt.value / 1000) / 0.00022; });
+
+    const asteroids = [
+      { s: MDSprites.asteroidBig, x: 0.12, y: 0.30, sp: 0.00040 },
+      { s: MDSprites.asteroidSmall, x: 0.70, y: 0.22, sp: 0.00055 },
+      { s: MDSprites.debrisMetal, x: 0.45, y: 0.12, sp: 0.00030 },
+    ];
+
+    function frame(now) {
+      let t;
+      if (auto.checked) {
+        t = 0.5 - 0.5 * Math.cos((now - autoStart) * 0.00022); // ~28s round trip, eases at both ends
+        alt.value = Math.round(t * 1000);
+      } else t = alt.value / 1000;
+
+      MDEvolution.render(ctx, A, t, now, { debug: dbg.checked, moonX: 0.2 });
+
+      if (!dbg.checked) {
+        asteroids.forEach((a, i) => {
+          const x = Math.round(A.W * a.x + Math.sin(now * a.sp + i) * 10);
+          const y = Math.round(A.H * a.y + Math.cos(now * a.sp * 0.8 + i) * 4);
+          ctx.drawImage(a.s, x - (a.s.width >> 1), y - (a.s.height >> 1));
+        });
+        const sx = Math.round(A.W * 0.56), sy = Math.round(A.H * 0.34 + Math.sin(now * 0.0015) * 2);
+        const ship = MDSprites.ship;
+        const flame = 2 + Math.round(Math.abs(Math.sin(now * 0.02)) * 3);
+        ctx.fillStyle = '#FF8A3D'; ctx.fillRect(sx - 1, sy + (ship.height >> 1) - 1, 3, flame);
+        ctx.fillStyle = '#FFE08A'; ctx.fillRect(sx, sy + (ship.height >> 1) - 1, 1, Math.max(1, flame - 2));
+        ctx.drawImage(ship, sx - (ship.width >> 1), sy - (ship.height >> 1));
+      }
+      requestAnimationFrame(frame);
+    }
+    requestAnimationFrame(frame);
+  };
+  img.src = window.MD_ART.refDusk;
+</script>
+</body>
+</html>

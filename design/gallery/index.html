@@ -1,0 +1,191 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Manhattan Defense — round 2 style gallery</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --red: #D81F26; --red-hover: #B81920;
+    --surface-0: #000; --surface-1: #0A0A0A; --surface-2: #121212; --divider: #2B2B2B;
+    --text-primary: #fff; --text-secondary: #BFBFBF; --text-tertiary: #7A7A7A;
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0; background: var(--surface-0); color: var(--text-primary);
+    font-family: "JetBrains Mono", monospace; padding: 28px 20px 60px;
+  }
+  .wrap { max-width: 1720px; margin: 0 auto; }
+  h1 {
+    font-family: "Press Start 2P", monospace; font-size: 18px; line-height: 1.6;
+    margin: 0 0 6px;
+  }
+  h1 .r2 { color: var(--red); }
+  .lead { color: var(--text-secondary); font-size: 12px; max-width: 760px; margin: 0 0 20px; line-height: 1.6; }
+  .lead a { color: var(--red); }
+
+  .controls {
+    display: flex; flex-wrap: wrap; align-items: center; gap: 18px;
+    border: 1px solid var(--divider); border-radius: 10px; background: var(--surface-1);
+    padding: 12px 16px; margin-bottom: 18px;
+    font-size: 11px; letter-spacing: 0.06em; text-transform: uppercase;
+  }
+  .controls label { display: flex; align-items: center; gap: 8px; color: var(--text-secondary); }
+  .controls input[type="range"] { width: 260px; accent-color: var(--red); }
+  .controls input[type="checkbox"] { accent-color: var(--red); }
+  #altReadout { color: var(--text-primary); min-width: 62px; }
+  #zoneReadout { color: var(--red); min-width: 90px; }
+  .hint { color: var(--text-tertiary); margin-left: auto; text-transform: none; letter-spacing: 0.02em; }
+
+  .grid {
+    display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 14px;
+  }
+  .panel {
+    border: 1px solid var(--divider); border-radius: 10px; background: var(--surface-1);
+    padding: 12px; display: flex; flex-direction: column;
+  }
+  .panel header { display: flex; align-items: baseline; gap: 8px; margin-bottom: 10px; }
+  .panel .letter {
+    color: var(--red); font-weight: 700; font-size: 13px;
+  }
+  .panel h2 { font-size: 12px; letter-spacing: 0.08em; text-transform: uppercase; margin: 0; }
+  .panel .ref { margin-left: auto; font-size: 9px; color: var(--text-tertiary); letter-spacing: 0.04em; }
+  .frame {
+    position: relative; border: 1px solid #1F1F1F; border-radius: 3px; overflow: hidden;
+    background: #000; aspect-ratio: 240 / 360;
+  }
+  .frame canvas {
+    position: absolute; inset: 0; width: 100%; height: 100%; display: block;
+    image-rendering: pixelated; image-rendering: crisp-edges;
+  }
+  .scan {
+    position: absolute; inset: 0; pointer-events: none;
+    background: repeating-linear-gradient(to bottom,
+      rgba(255,255,255,var(--scan-op, 0)) 0, rgba(255,255,255,var(--scan-op, 0)) 1px,
+      transparent 1px, transparent 3px);
+  }
+  .panel .tagline { font-size: 11px; color: var(--text-secondary); line-height: 1.55; margin: 10px 2px 8px; }
+  .panel .tagline em { color: var(--text-primary); font-style: normal; }
+  .tags { display: flex; gap: 6px; flex-wrap: wrap; margin: 0 2px 2px; }
+  .tag {
+    font-size: 9px; letter-spacing: 0.05em; text-transform: uppercase;
+    background: var(--surface-2); color: var(--text-tertiary); padding: 3px 8px; border-radius: 6px;
+  }
+  .tag.red { background: rgba(216,31,38,0.18); color: var(--red); }
+  .foot { margin-top: 26px; font-size: 11px; color: var(--text-tertiary); line-height: 1.6; }
+  .foot a { color: var(--red); text-decoration: none; }
+</style>
+</head>
+<body>
+  <div class="wrap">
+    <h1>MANHATTAN DEFENSE <span class="r2">/ ROUND 2</span></h1>
+    <p class="lead">
+      Four genuinely different renderers — not reskins. Same scene contract in each panel:
+      a ship climbing a Manhattan skyline from street to orbit, driven by one altitude value.
+      Palette stays locked (<code>#D81F26</code> on black/greys); what changes is the
+      <em>drawing technique</em>. Round 1 lives in the <a href="../_archive/round1/index.html">archive</a>.
+    </p>
+    <div class="controls">
+      <label>Altitude <input type="range" id="alt" min="0" max="1000" value="60"></label>
+      <span id="altReadout">060M</span>
+      <span id="zoneReadout">STREET</span>
+      <label><input type="checkbox" id="auto"> Auto-climb</label>
+      <span class="hint">drag the slider to fly street &rarr; orbit &nbsp;·&nbsp; ?alt=0.8 &amp; ?auto=1 deep-link</span>
+    </div>
+    <div class="grid" id="gallery"></div>
+    <p class="foot">
+      What to judge: where red is allowed to live, how readable the ship/bullets are against
+      the city, and how each style feels when the altitude slider moves. Nothing here is
+      final game code — each style is a self-contained renderer in <code>styles/</code>.
+    </p>
+  </div>
+
+<script src="lib.js"></script>
+<script src="styles/downwell.js"></script>
+<script src="styles/neon-noir.js"></script>
+<script src="styles/eboy.js"></script>
+<script src="styles/bytepath.js"></script>
+<script>
+(function () {
+  'use strict';
+  const W = 240, H = 360;
+
+  // --- URL params ---------------------------------------------------------
+  const q = new URLSearchParams(location.search);
+  const altParam = q.has('alt') ? Math.round(parseFloat(q.get('alt')) * 1000) : null;
+
+  // --- Build panels ---------------------------------------------------------
+  const gallery = document.getElementById('gallery');
+  // Only styles written for THIS page's contract (create + altitude) are
+  // loaded above; filter defensively in case other files ever get included.
+  const panels = MDLib.styles.filter((def) => typeof def.create === 'function').map((def) => {
+    const el = document.createElement('section');
+    el.className = 'panel';
+    el.innerHTML =
+      '<header><span class="letter">' + def.letter + '</span>' +
+      '<h2>' + def.name + '</h2>' +
+      '<span class="ref">' + def.ref + '</span></header>' +
+      '<div class="frame"><canvas></canvas>' +
+      '<div class="scan" style="--scan-op:' + (def.scanlines || 0) + '"></div></div>' +
+      '<p class="tagline">' + def.tagline + '</p>' +
+      '<div class="tags">' + def.tags.map((t) =>
+        '<span class="tag' + (t.red ? ' red' : '') + '">' + t.label + '</span>').join('') + '</div>';
+    gallery.appendChild(el);
+    const canvas = el.querySelector('canvas');
+    const instance = def.create(MDLib.setupCanvas(canvas, W, H), W, H);
+    return { def, instance };
+  });
+
+  // --- Controls -------------------------------------------------------------
+  const slider = document.getElementById('alt');
+  const autoBox = document.getElementById('auto');
+  const altOut = document.getElementById('altReadout');
+  const zoneOut = document.getElementById('zoneReadout');
+
+  if (altParam !== null && !Number.isNaN(altParam)) {
+    slider.value = Math.max(0, Math.min(1000, altParam));
+  }
+  if (q.get('auto') === '1') autoBox.checked = true;
+
+  function zoneOf(a) {
+    if (a < 0.25) return 'STREET';
+    if (a < 0.50) return 'TOWERS';
+    if (a < 0.75) return 'ROOFTOPS';
+    if (a < 0.90) return 'CLOUDS';
+    return 'ORBIT';
+  }
+
+  // --- Main loop --------------------------------------------------------------
+  let autoT = 0, lastT = 0, holdT = 0;
+  function frame(nowMs) {
+    const t = nowMs / 1000;
+    const dt = Math.min(0.05, t - lastT || 0.016);
+    lastT = t;
+
+    let alt = slider.value / 1000;
+    if (autoBox.checked) {
+      autoT += dt;
+      const cycle = 26;                 // seconds street -> orbit
+      alt = Math.min(1, autoT / cycle);
+      if (alt >= 1) {
+        holdT += dt;
+        if (holdT > 1.6) { autoT = 0; holdT = 0; alt = 0; }
+      }
+      slider.value = Math.round(alt * 1000);
+    } else {
+      autoT = alt * 26; holdT = 0;      // resume from slider when re-enabled
+    }
+
+    altOut.textContent = String(Math.round(alt * 1000)).padStart(3, '0') + 'M';
+    zoneOut.textContent = zoneOf(alt);
+
+    for (const p of panels) p.instance.render(t, alt);
+    requestAnimationFrame(frame);
+  }
+  requestAnimationFrame(frame);
+})();
+</script>
+</body>
+</html>

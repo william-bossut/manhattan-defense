@@ -1,0 +1,104 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Manhattan Defense — style mockups</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --nothing-red: #D81F26; --nothing-red-hover: #B81920;
+    --surface-0: #000; --surface-1: #0A0A0A; --surface-2: #121212; --divider: #2B2B2B;
+    --text-primary: #fff; --text-secondary: #BFBFBF; --text-tertiary: #7A7A7A;
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0; background: var(--surface-0); color: var(--text-primary);
+    font-family: "JetBrains Mono", monospace; padding: 32px 16px 60px;
+  }
+  .wrap { max-width: 960px; margin: 0 auto; }
+  h1 {
+    font-family: "Press Start 2P", monospace; font-size: 22px; line-height: 1.6;
+    margin: 0 0 6px;
+  }
+  .lead { color: var(--text-secondary); font-size: 13px; max-width: 640px; margin: 0 0 28px; }
+  .lead a { color: var(--nothing-red); }
+  .grid {
+    display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 16px;
+  }
+  .card {
+    border: 1px solid var(--divider); border-radius: 10px; background: var(--surface-1);
+    padding: 16px; text-decoration: none; color: inherit; display: block;
+    transition: border-color 160ms cubic-bezier(0.2,0,0,1), transform 160ms cubic-bezier(0.2,0,0,1);
+  }
+  .card:hover { border-color: var(--nothing-red); transform: translateY(-2px); }
+  .swatch { display: flex; gap: 4px; height: 10px; margin-bottom: 12px; border-radius: 3px; overflow: hidden; }
+  .swatch span { flex: 1; }
+  .card h2 {
+    font-size: 13px; letter-spacing: 0.06em; text-transform: uppercase; margin: 0 0 6px;
+  }
+  .card .letter { color: var(--nothing-red); }
+  .card p { font-size: 12px; color: var(--text-secondary); margin: 0 0 10px; line-height: 1.5; }
+  .card .tags { display: flex; gap: 6px; flex-wrap: wrap; }
+  .card .tag {
+    font-size: 10px; letter-spacing: 0.05em; text-transform: uppercase;
+    background: var(--surface-2); color: var(--text-tertiary); padding: 3px 8px; border-radius: 6px;
+  }
+  .foot { margin-top: 32px; font-size: 11px; color: var(--text-tertiary); }
+  .foot a { color: var(--nothing-red); }
+</style>
+</head>
+<body>
+  <div class="wrap">
+    <h1>MANHATTAN DEFENSE</h1>
+    <p class="lead">
+      Four visual directions for "The Ascent" — same palette
+      (<code>#D81F26</code> on black/grey), same tiny playable ship,
+      same altitude slider. Open each, drag the slider or hit Play, then
+      decide which direction (or mix) to build for real. Nothing here is
+      final game code — see <a href="../docs/README.md">../docs/</a> for
+      the full write-up.
+    </p>
+    <div class="grid">
+      <a class="card" href="red-noir.html">
+        <div class="swatch">
+          <span style="background:#000"></span><span style="background:#0A0A0A"></span>
+          <span style="background:#D81F26"></span><span style="background:#1F1F1F"></span>
+        </div>
+        <h2><span class="letter">A.</span> Red Noir</h2>
+        <p>Pure black, dense filled towers, red-lit windows only, strongest scanlines. Most faithful to "only red exists."</p>
+        <div class="tags"><span class="tag">Filled</span><span class="tag">High contrast</span><span class="tag">Scanlines</span></div>
+      </a>
+      <a class="card" href="night-glow.html">
+        <div class="swatch">
+          <span style="background:#0A0E1C"></span><span style="background:#131826"></span>
+          <span style="background:#D81F26"></span><span style="background:#1C2436"></span>
+        </div>
+        <h2><span class="letter">B.</span> Night Glow</h2>
+        <p>Dark navy night sky, soft red bloom and fog for depth. Most classically "cyberpunk atmosphere."</p>
+        <div class="tags"><span class="tag">Filled</span><span class="tag">Bloom</span><span class="tag">Fog</span></div>
+      </a>
+      <a class="card" href="dot-matrix.html">
+        <div class="swatch">
+          <span style="background:#000"></span><span style="background:#0A0A0A"></span>
+          <span style="background:#D81F26"></span><span style="background:#2B2B2B"></span>
+        </div>
+        <h2><span class="letter">C.</span> Dot-Matrix HUD</h2>
+        <p>Same pixel game world as A, but menus/HUD borrow Open Island &amp; OpenBand's literal dot-grid, pills and flat, no-glow chrome.</p>
+        <div class="tags"><span class="tag">Filled</span><span class="tag">Dot-grid</span><span class="tag">On-brand chrome</span></div>
+      </a>
+      <a class="card" href="wireframe-noir.html">
+        <div class="swatch">
+          <span style="background:#000"></span><span style="background:#000"></span>
+          <span style="background:#ffffff"></span><span style="background:#D81F26"></span>
+        </div>
+        <h2><span class="letter">D.</span> Wireframe Noir</h2>
+        <p>New: monochrome white line-art architecture on black, hazard hatch-marks and hanging chains — after the <em>Visiophobia</em> reference. Red drops to a rare accent.</p>
+        <div class="tags"><span class="tag">Outline only</span><span class="tag">Reference-driven</span><span class="tag">Red = rare</span></div>
+      </a>
+    </div>
+    <p class="foot">Controls in each mockup: Arrows/WASD to move, Space to shoot, drag the altitude slider to preview street&nbsp;&rarr;&nbsp;orbit, or check "auto-climb" to watch it happen on its own.</p>
+  </div>
+</body>
+</html>

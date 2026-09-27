@@ -1,0 +1,84 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Manhattan Defense — D. Wireframe Noir (mockup)</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="shared/chrome.css">
+<style>
+  :root {
+    --nothing-red: #D81F26;
+    --nothing-red-hover: #B81920;
+    --surface-0: #000000;
+    --surface-1: #0A0A0A;
+    --surface-2: #121212;
+    --surface-3: #1F1F1F;
+    --divider: #2B2B2B;
+    --text-primary: #FFFFFF;
+    --text-secondary: #BFBFBF;
+    --text-tertiary: #7A7A7A;
+    --font-title: "Press Start 2P", monospace;
+    --font-body: "JetBrains Mono", monospace;
+    --title-glow: 8px;
+    --scan-opacity: 0.04;
+  }
+  .title { font-weight: normal; letter-spacing: 0.02em; }
+</style>
+</head>
+<body data-theme="wireframe-noir">
+  <div class="wrap">
+    <div class="topbar">
+      <span>MANHATTAN DEFENSE — MOCKUP D / WIREFRAME NOIR</span>
+      <a href="index.html">&larr; compare all 4</a>
+    </div>
+    <div class="stage">
+      <div id="menuView" class="view">
+        <canvas id="menuCanvas" width="384" height="216"></canvas>
+        <div class="menuOverlay">
+          <h1 class="title">MANHATTAN<br>DEFENSE</h1>
+          <p class="subtitle">"The Ascent" — monochrome line-art skyline, red as a rare accent</p>
+          <button id="playBtn" class="btn-primary">Play demo</button>
+          <div class="menuLinks"><span class="tag">High Scores</span><span class="tag">Options</span></div>
+        </div>
+      </div>
+      <div id="gameView" class="view hidden">
+        <div class="canvasFrame">
+          <canvas id="gameCanvas" width="384" height="216"></canvas>
+          <div class="scanlines"></div>
+        </div>
+        <div class="hud">
+          <div class="hudRow"><span class="label">Score</span><span id="hudScore">0</span></div>
+          <div class="hudRow"><span class="label">Altitude</span><span id="hudAlt">0</span><span class="zone" id="hudZone">STREET</span></div>
+          <div class="hudRow lives"><span class="label">Lives</span><span id="hudLives">●●●</span></div>
+        </div>
+      </div>
+    </div>
+    <div class="controls">
+      <label>Altitude preview <input id="altSlider" type="range" min="0" max="100" value="0"></label>
+      <label><input id="autoClimb" type="checkbox" checked> auto-climb</label>
+      <button id="backBtn" class="btn-ghost hidden">&larr; Menu</button>
+      <span class="hint">Arrows/WASD move · Space shoot</span>
+    </div>
+    <p class="note">Reference: <em>Visiophobia</em> (itch.io) — monochrome white line-art on black. Same technique applied to our skyline-climb concept, not a copy of that game. Compare against the other 3 directions at <a href="index.html">index.html</a>.</p>
+  </div>
+<script src="shared/engine.js"></script>
+<script src="shared/page.js"></script>
+<script>
+  const theme = {
+    mode: 'wireframe',
+    glow: 0.7,
+    vignette: 0.45,
+    colors: {
+      bg0: '#000000', bg1: '#000000',
+      building: '#000000', buildingEdge: '#ffffff',
+      windowLit: '#D81F26', windowDim: '#1f1f1f',
+      fog: '6,6,6', star: '#ffffff', cloud: '#0a0a0a',
+      red: '#D81F26', line: '#ffffff', text: '#ffffff', textSecondary: '#e6e6e6',
+    },
+  };
+  MDPage.init(theme);
+</script>
+</body>
+</html>

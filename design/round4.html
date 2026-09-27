@@ -1,0 +1,135 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Manhattan Defense — round 4 (landmarks + more sprites)</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+  * { box-sizing: border-box; }
+  body { margin: 0; background: #000; color: #fff; font-family: "JetBrains Mono", monospace; padding: 28px 20px 60px; }
+  .wrap { max-width: 1200px; margin: 0 auto; }
+  h1 { font-family: "Press Start 2P", monospace; font-size: 18px; margin: 0 0 6px; }
+  .lead { color: #bfbfbf; font-size: 12px; max-width: 780px; margin: 0 0 24px; line-height: 1.6; }
+  .lead a { color: #D81F26; }
+  h2.section { font-size: 12px; letter-spacing: 0.08em; text-transform: uppercase; color: #D81F26; margin: 30px 0 4px; border-top: 1px solid #2b2b2b; padding-top: 20px; }
+  p.sub { font-size: 11px; color: #7a7a7a; margin: 0 0 14px; }
+
+  .sprites { display: flex; gap: 16px; flex-wrap: wrap; align-items: flex-end; }
+  .sprite-card { background: #0a0a0a; border: 1px solid #2b2b2b; border-radius: 8px; padding: 12px; text-align: center; width: 130px; }
+  .sprite-card canvas { image-rendering: pixelated; display: block; margin: 0 auto 8px; }
+  .sprite-card .label { font-size: 9px; letter-spacing: 0.04em; text-transform: uppercase; color: #bfbfbf; line-height: 1.4; }
+
+  .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 16px; }
+  .card { border: 1px solid #2b2b2b; border-radius: 8px; background: #0a0a0a; padding: 10px; cursor: pointer; transition: border-color 150ms ease, transform 150ms ease; }
+  .card:hover { border-color: #D81F26; transform: translateY(-2px); }
+  .card canvas { width: 100%; height: auto; display: block; image-rendering: pixelated; border-radius: 3px; background: #000; }
+  .card h2 { font-size: 11px; letter-spacing: 0.04em; text-transform: uppercase; margin: 8px 0 4px; }
+  .card .idx { color: #D81F26; }
+  .card .note { font-size: 10px; color: #7a7a7a; line-height: 1.4; }
+  .card .refs { font-size: 9px; color: #7a7a7a; margin-top: 4px; }
+  .card .refs a { color: #7a7a7a; }
+  .card .swatch { display: flex; height: 6px; border-radius: 2px; overflow: hidden; margin-top: 6px; }
+  .card .swatch span { flex: 1; }
+
+  #overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.94); display: none; align-items: center; justify-content: center; flex-direction: column; gap: 14px; z-index: 10; }
+  #overlay.open { display: flex; }
+  #overlay canvas { max-width: 92vw; max-height: 72vh; image-rendering: pixelated; border: 1px solid #2b2b2b; }
+  #overlay .info { text-align: center; max-width: 680px; }
+  #overlay h2 { font-size: 14px; letter-spacing: 0.05em; text-transform: uppercase; margin: 0 0 6px; }
+  #overlay .note { font-size: 11px; color: #bfbfbf; }
+  #overlay .refs { font-size: 10px; color: #7a7a7a; margin-top: 6px; }
+  #overlay .refs a { color: #D81F26; }
+  #overlay .nav { font-size: 10px; color: #7a7a7a; }
+  #overlay .close { position: absolute; top: 18px; right: 24px; font-size: 11px; color: #bfbfbf; cursor: pointer; }
+</style>
+</head>
+<body>
+  <div class="wrap">
+    <h1>MANHATTAN DEFENSE — ROUND 4</h1>
+    <p class="lead">
+      Three things from your feedback: <b>Red Alert's sky is dark navy now</b> (red stays a
+      danger signal, not the setting), <b>5 ship designs + 5 asteroid/debris designs</b> to
+      choose from, and a properly <b>hand-drawn, recognizable NYC skyline</b> — Flatiron,
+      Chrysler, Empire State, One World Trade, Brooklyn Bridge — built as a reusable module
+      (<code>gallery/round4/landmarks.js</code>) instead of random boxes, so whatever we lock
+      here carries straight into the real game. Round 3: <a href="round3.html">round3.html</a> ·
+      full 15-style survey: <a href="gallery.html">gallery.html</a>.
+    </p>
+
+    <h2 class="section">Ship designs</h2>
+    <p class="sub">Five distinct silhouettes — pick one, or mix (e.g. this hull with that accent).</p>
+    <div class="sprites" id="ships"></div>
+
+    <h2 class="section">Asteroid &amp; debris designs</h2>
+    <p class="sub">Rock, metal debris and a glowing hazard crystal — for variety in what you're dodging/shooting.</p>
+    <div class="sprites" id="rocks"></div>
+
+    <h2 class="section">Skyline + mood (the real deliverable to validate)</h2>
+    <p class="sub">Click to open fullscreen &amp; animated.</p>
+    <div class="grid" id="grid"></div>
+  </div>
+
+  <div id="overlay">
+    <div class="close" id="closeBtn">ESC &times;</div>
+    <canvas id="bigCanvas"></canvas>
+    <div class="info">
+      <h2 id="bigTitle"></h2>
+      <p class="note" id="bigNote"></p>
+      <p class="refs" id="bigRefs"></p>
+      <p class="nav">&larr; / &rarr; to flip &middot; <span id="bigIndex"></span></p>
+    </div>
+  </div>
+
+<script src="gallery/lib.js"></script>
+<script src="gallery/sprites.js"></script>
+<script src="gallery/round4/landmarks.js"></script>
+<script src="gallery/round3/base.js"></script>
+<script src="gallery/round4/s1-cinematic-landmarks.js"></script>
+<script src="gallery/round4/s2-red-alert-navy.js"></script>
+<script src="gallery/round4/s3-neon-landmarks.js"></script>
+<script>
+  function showSprite(container, label, sprite, scale) {
+    const card = document.createElement('div');
+    card.className = 'sprite-card';
+    const canvas = document.createElement('canvas');
+    canvas.width = sprite.width * scale;
+    canvas.height = sprite.height * scale;
+    const ctx = canvas.getContext('2d');
+    ctx.imageSmoothingEnabled = false;
+    ctx.fillStyle = '#000'; ctx.fillRect(0, 0, canvas.width, canvas.height);
+    ctx.drawImage(sprite, 0, 0, canvas.width, canvas.height);
+    card.appendChild(canvas);
+    const l = document.createElement('div'); l.className = 'label'; l.textContent = label;
+    card.appendChild(l);
+    container.appendChild(card);
+  }
+  const ships = document.getElementById('ships');
+  showSprite(ships, 'Racer (red)', MDSprites.ship, 8);
+  showSprite(ships, 'Racer (cyan)', MDSprites.shipCyan, 8);
+  showSprite(ships, 'Gunship', MDSprites.shipGunship, 8);
+  showSprite(ships, 'Scout', MDSprites.shipScout, 9);
+  showSprite(ships, 'Interceptor', MDSprites.shipInterceptor, 8);
+
+  const rocks = document.getElementById('rocks');
+  showSprite(rocks, 'Asteroid — large', MDSprites.asteroidBig, 8);
+  showSprite(rocks, 'Asteroid — large v2', MDSprites.asteroidBig2, 8);
+  showSprite(rocks, 'Asteroid — small (split)', MDSprites.asteroidSmall, 8);
+  showSprite(rocks, 'Metal debris', MDSprites.debrisMetal, 8);
+  showSprite(rocks, 'Crystal hazard', MDSprites.crystalHazard, 8);
+
+  MDLib.mountGallery({
+    gridEl: document.getElementById('grid'),
+    styleList: MDLib.styles,
+    overlay: document.getElementById('overlay'),
+    bigCanvas: document.getElementById('bigCanvas'),
+    bigTitle: document.getElementById('bigTitle'),
+    bigNote: document.getElementById('bigNote'),
+    bigRefs: document.getElementById('bigRefs'),
+    bigIndex: document.getElementById('bigIndex'),
+    closeBtn: document.getElementById('closeBtn'),
+  });
+</script>
+</body>
+</html>

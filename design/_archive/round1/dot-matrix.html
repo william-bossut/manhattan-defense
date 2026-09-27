@@ -1,0 +1,100 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Manhattan Defense — C. Dot-Matrix HUD (mockup)</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="shared/chrome.css">
+<style>
+  :root {
+    --nothing-red: #D81F26;
+    --nothing-red-hover: #B81920;
+    --surface-0: #000000;
+    --surface-1: #0A0A0A;
+    --surface-2: #121212;
+    --surface-3: #1F1F1F;
+    --divider: #2B2B2B;
+    --text-primary: #FFFFFF;
+    --text-secondary: #BFBFBF;
+    --text-tertiary: #7A7A7A;
+    --font-title: "Press Start 2P", monospace;
+    --font-body: "JetBrains Mono", monospace;
+    --title-glow: 0px;
+    --scan-opacity: 0;
+    --dot-color: rgba(255,255,255,0.07);
+  }
+  /* This variation's difference is the chrome around the game, not the
+     rendering inside the canvas: dot-grid textures + pill shapes, straight
+     from open-island-linux / OpenBand, instead of scanlines/hard glow. */
+  .stage { background: var(--surface-1); }
+  .menuOverlay.dot-grid { background-color: rgba(0,0,0,0.25); }
+  .stage.dot-grid { }
+  .hud {
+    border-top: none;
+    background: var(--surface-1);
+    border-radius: 18px;
+    margin-top: 10px;
+    padding: 10px 18px;
+  }
+  .btn-primary, .btn-ghost { border-radius: 18px; }
+  .tag { border-radius: 999px; }
+  .hudRow .zone { background: rgba(216,31,38,0.18); padding: 2px 8px; border-radius: 999px; }
+</style>
+</head>
+<body data-theme="dot-matrix">
+  <div class="wrap">
+    <div class="topbar">
+      <span>MANHATTAN DEFENSE — MOCKUP C / DOT-MATRIX HUD</span>
+      <a href="index.html">&larr; compare all 4</a>
+    </div>
+    <div class="stage">
+      <div id="menuView" class="view">
+        <canvas id="menuCanvas" width="384" height="216"></canvas>
+        <div class="menuOverlay dot-grid">
+          <h1 class="title">MANHATTAN<br>DEFENSE</h1>
+          <p class="subtitle">"The Ascent" — Open Island / OpenBand chrome: dots, pills, no glow</p>
+          <button id="playBtn" class="btn-primary">Play demo</button>
+          <div class="menuLinks"><span class="tag">High Scores</span><span class="tag">Options</span></div>
+        </div>
+      </div>
+      <div id="gameView" class="view hidden">
+        <div class="canvasFrame">
+          <canvas id="gameCanvas" width="384" height="216"></canvas>
+          <div class="scanlines"></div>
+        </div>
+        <div class="hud pill">
+          <div class="hudRow"><span class="label">Score</span><span id="hudScore">0</span></div>
+          <div class="hudRow"><span class="label">Altitude</span><span id="hudAlt">0</span><span class="zone" id="hudZone">STREET</span></div>
+          <div class="hudRow lives"><span class="label">Lives</span><span id="hudLives">●●●</span></div>
+        </div>
+      </div>
+    </div>
+    <div class="controls">
+      <label>Altitude preview <input id="altSlider" type="range" min="0" max="100" value="0"></label>
+      <label><input id="autoClimb" type="checkbox" checked> auto-climb</label>
+      <button id="backBtn" class="btn-ghost hidden">&larr; Menu</button>
+      <span class="hint">Arrows/WASD move · Space shoot</span>
+    </div>
+    <p class="note">Style mockup only, not the final game — engine/menus come later. Compare against the other 3 directions at <a href="index.html">index.html</a>.</p>
+  </div>
+<script src="shared/engine.js"></script>
+<script src="shared/page.js"></script>
+<script>
+  const theme = {
+    mode: 'filled',
+    glow: 0.15,
+    vignette: 0.22,
+    colors: {
+      bg0: '#000000', bg1: '#000000',
+      building: '#0A0A0A', buildingEdge: '#2B2B2B',
+      windowLit: '#D81F26', windowDim: '#1f1f1f',
+      fog: '8,8,8', star: '#ffffff', cloud: '#0a0a0a',
+      red: '#D81F26', line: '#ffffff', text: '#ffffff', textSecondary: '#bfbfbf',
+    },
+  };
+  MDPage.init(theme);
+</script>
+</body>
+</html>
